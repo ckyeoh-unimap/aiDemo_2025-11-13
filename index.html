@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>H5P slides</title>
+</head>
+
+<body>
+
+    <!-- Container where H5P content will appear -->
+    <div id="h5p-container"></div>
+
+    <!-- Include h5p-standalone JavaScript -->
+    <script src='./h5p-standalone/dist/main.bundle.js'></script>
+
+<script>
+window.MathJax = {
+    tex: { 
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+    },
+    chtml: {
+        displayAlign: 'center',
+        scale: 1
+    },
+    startup: {
+        ready: () => {
+            MathJax.startup.defaultReady();
+            MathJax.typesetPromise().catch(err => console.error(err));
+        }
+    }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+<script>
+    // Initialize H5P
+    window.addEventListener('DOMContentLoaded', function () {
+
+        const options = {
+            h5pJsonPath: './h5p-content/h5p', // Path to your H5P content
+            frameJs: './h5p-standalone/dist/frame.bundle.js',
+            frameCss: './h5p-standalone/dist/styles/h5p.css'
+        };
+            
+        const container = document.getElementById('h5p-container');
+            
+        new H5PStandalone.H5P(container, options);
+
+        const poll = setInterval(() => {
+            if (document.querySelector('.h5p-content') && window.MathJax?.typesetPromise) {
+                MathJax.typesetPromise().catch(err => console.error("MathJax error:", err));
+                clearInterval(poll);
+            }
+        }, 300);
+
+    });
+</script>
+
+</body>
+
+</html>
+
